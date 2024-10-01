@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/png" href="https://files.catbox.moe/vpc3jn.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@xy</title>
+    <script src="https://kit.fontawesome.com/16f6723644.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            color: rgb(0, 0, 0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            perspective: 800px;
+            position: relative;
+        }
+        
+        .container {
+            text-align: center;
+            width: 300px;
+            padding: 20px;
+            background-color: #00000000;
+            border: 1px solid #000000;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .welcome-text {
+            font-size: 50px;
+            font-weight: bold;
+            color: #000000;
+            text-transform: none;
+        }
+
+        .profile-pic {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgb(0, 0, 0);
+            position: absolute;
+            top: -65px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-top: 80px;
+            margin-bottom: 10px;
+            font-weight: 400;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+
+        .volume-slider {
+            width: 150px;
+            margin: 20px auto;
+            appearance: none;
+            height: 5px;
+            background: linear-gradient(90deg, #000000 100%, #1d1d1d 100%);
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #000000;
+            cursor: pointer;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .icons a {
+            color: rgb(0, 0, 0);
+            margin: 10px;
+            font-size: 40px;
+            transition: color 0.3s, transform 0.3s ease;
+        }
+
+        .icons a:hover {
+            color: #1d1d1d;
+            transform: scale(1.2);
+        }
+
+        video#background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+            pointer-events: none;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay">
+        <div class="welcome-text">Welcome</div>
+    </div>
+
+    <div class="container" id="tilt-card">
+        <img src="https://files.catbox.moe/assj9z.png" alt="Profile Picture" class="profile-pic">
+        <h1>xy</h1>
+        <p>frontend developer</p>
+        
+        <input type="range" id="volume-slider" class="volume-slider" min="0" max="1" step="0.01" value="1">
+        
+        <div class="icons">
+            <a href="https://discord.com/users/511945873052139533" target="_blank"><i class="fa-brands fa-discord"></i></a>
+        </div>
+    </div>
+
+    <video id="background-video" loop muted></video>
+
+    <audio id="welcome-audio" src="https://files.catbox.moe/tsjf1o.mp3" loop></audio>
+
+    <script>
+        const overlay = document.getElementById('overlay');
+        const card = document.getElementById('tilt-card');
+        const welcomeAudio = document.getElementById('welcome-audio');
+        const volumeSlider = document.getElementById('volume-slider');
+        const backgroundVideo = document.getElementById('background-video');
+
+        const setBackground = (mediaUrl = '', isVideo = false) => {
+            if (isVideo && mediaUrl) {
+
+                backgroundVideo.src = mediaUrl;
+                backgroundVideo.style.display = 'block';
+                document.body.style.backgroundImage = 'none';
+            } else if (mediaUrl) {
+
+                document.body.style.backgroundImage = `url('${mediaUrl}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundRepeat = 'no-repeat';
+                document.body.style.backgroundPosition = 'center';
+                backgroundVideo.style.display = 'none';
+            } else {
+                document.body.style.backgroundImage = 'none';
+                document.body.style.backgroundColor = '#000';
+                backgroundVideo.style.display = 'none';
+            }
+        };
+
+        setBackground('https://files.catbox.moe/mwy6ds.mp4', true);
+
+        const updateSliderBackground = (value) => {
+            const volumePercent = value * 100;
+            volumeSlider.style.background = `linear-gradient(90deg, #000000 ${volumePercent}%, #1d1d1d ${volumePercent}%)`;
+        };
+
+        updateSliderBackground(volumeSlider.value);
+
+        overlay.addEventListener('click', () => {
+            overlay.classList.add('hidden');
+            welcomeAudio.play();
+            backgroundVideo.play();
+        });
+
+        volumeSlider.addEventListener('input', (e) => {
+            const volume = e.target.value;
+            welcomeAudio.volume = volume;
+            updateSliderBackground(volume);
+        });
+
+        card.addEventListener('mousemove', (e) => {
+            const { left, top, width, height } = card.getBoundingClientRect();
+            const centerX = left + width / 2;
+            const centerY = top + height / 2;
+            const mouseX = e.clientX - centerX;
+            const mouseY = e.clientY - centerY;
+            const rotateX = -(mouseY / height) * 25;
+            const rotateY = (mouseX / width) * 25;
+            card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transition = 'transform 0.5s ease-out';
+            card.style.transform = `rotateX(0) rotateY(0) scale(1)`;
+        });
+    </script>
+</body>
+</html>
